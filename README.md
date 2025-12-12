@@ -1,8 +1,9 @@
 # Documentación Técnica
 
+Este es el contenido que alberga mi documentación personal y notas técnicas sobre diversos proyectos y aprendizajes, espero que les sirva tanto a ustedes como a mí.
 ## Windows
 
-* [Recuperación](./diskpart_recuperación_unidad_usb.md)
+* [DiskPart: Recuperación de USB dañada](./diskpart_recuperación_unidad_usb.md)
 
 ## Linux
 
