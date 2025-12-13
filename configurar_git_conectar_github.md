@@ -6,11 +6,7 @@
 |--------|-------|
 | Rosendo Camal | 12/12/2025 |
 
----
-
 ## Objetivo
-
----
 
 Configurar **Git** de manera básica para poder conectarse rápidamente a **GitHub** y empezar a trabajar local y poder enviar nuestros cambios del repositorio al servidor. Esto lo haremos en nuestra computadora con Fedora.
 
@@ -23,7 +19,7 @@ Para ello introducimos a Git un usuario que será prácticamente la firma de los
 $ git config --global user.name "Your name"
 
 # Sustituye mail@domain.com por tu dirección de correo electrónico.
-$ git config --global user.mail mail@domain.com
+$ git config --global user.email mail@domain.com
 ```
 
 Para ver que dichos cambios hayan tenido efectos o lo que estemos modificando utilizamos el siguiente comando:
@@ -34,11 +30,7 @@ $ git config --list
 
 Con el comando anterior, verificamos los cambios hechos que hemos realizado actualmente con `git config --global user.name` y `git config --global user.mail`.
 
----
-
 ## Conexión a GitHub
-
----
 
 ### Conexión a GitHub con SSH
 
@@ -57,7 +49,7 @@ Creamos una clave SSH indicando nuestro correo utilizado anteriormente con Git (
 $ ssh-keygen -t ed25519 -f ~/.ssh/git_workshop -C "mail@domain.com"
 ```
 
-> También se puede crear la clave SSH de manera más rápida pero sin tanta personalización al usar únicamente `ssh-key`.
+> También se puede crear la clave SSH de manera más rápida pero sin tanta personalización al usar únicamente `ssh-keygen`.
 
 Necesitamos comprobar que **ssh-agent** esté funcionando ya que esté nos permite iniciar sesión en otros servidores sin que nosotros introducazmos de nuevo una contraseña.
 
@@ -106,16 +98,11 @@ $ git clone git@github:user/repo.git
 
 Y ya con ello podremos trabajar con Git en dicho repositorio
 
----
-
 ## Resultado
 
 Con lo anterior ya tendremos configurado nuestro Git, tendremos acceso al servidor remoto de GitHub, podremos trabajar en nuestros repositorios y subir cambios o hacer ciertas acciones con el respaldo que nos brinda GitHub al disponer con ellos nuestros repositorios.
-
----
 
 ## Referencias
 
 * [Configuración de Git](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration)
 * [Generación de una nueva clave SSH y adición al agente SSH](https://docs.github.com/es/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-
