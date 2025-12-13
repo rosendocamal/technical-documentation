@@ -28,7 +28,7 @@ Para ver que dichos cambios hayan tenido efectos o lo que estemos modificando ut
 $ git config --list
 ```
 
-Con el comando anterior, verificamos los cambios hechos que hemos realizado actualmente con `git config --global user.name` y `git config --global user.mail`.
+Con el comando anterior, verificamos los cambios hechos que hemos realizado actualmente con `git config --global user.name` y `git config --global user.email`.
 
 ## Conexión a GitHub
 
