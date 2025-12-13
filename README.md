@@ -8,3 +8,7 @@ Este es el contenido que alberga mi documentación personal y notas técnicas so
 ## Linux
 
 * [Mis primeros pasos en Fedora](./mis_primeros_pasos_fedora.md)
+
+## Git y GitHub
+
+* [Configuración básica y rápida de Git con GitHub](./configurar_git_conectar_github.md)
