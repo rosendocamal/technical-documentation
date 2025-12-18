@@ -8,6 +8,7 @@ Este es el contenido que alberga mi documentación personal y notas técnicas so
 ## Linux
 
 * [Mis primeros pasos en Fedora](./mis_primeros_pasos_fedora.md)
+* [Instalar VirtualBox en Fedora 43](./instalar_virtualbox_en_fedora.md)
 
 ## Git y GitHub
 
