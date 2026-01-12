@@ -42,7 +42,7 @@ Primero actualizamos el sistema y posteriormente instalamos VirtualBox.
 
 ```
 $ sudo dnf update
-$ sudo dnf install VirtualBox-7.2
+$ sudo dnf install VirtualBox-7.2 # O la versión específica actual en el repo
 ```
 
 ## INSTALAR EXTENSIONES DE VIRTUALBOX
@@ -50,14 +50,20 @@ $ sudo dnf install VirtualBox-7.2
 Verificamos la versión instalada de VirtualBox.
 
 ``` 
-$ vboxmanage -v | cut -dr -f1
+$ vboxmanage -v | cut -d'r' -f1
 ```
 
 Con el comando anterior es posible saber que versión descargar y continuamos con ello.
 
 ```
-$ wget https://download.virtualbox.org/virtualbox/7.2.4/Oracle_VirtualBox_Extension_Pack-7.2.4.vbox-extpack
-$ sudo vboxmanage extpack install Oracle_VirtualBox_Extension_Pack-7.2.4.vbox-extpack
+# 1. Obtenemos la versión instalada y la guardamos en una variable
+$ VBOX_VER=$(vboxmanage -v | cut -d'r' -f1)
+
+# 2. Descargamos la versión exacta
+$ wget [https://download.virtualbox.org/virtualbox/$VBOX_VER/Oracle_VirtualBox_Extension_Pack-$VBOX_VER.vbox-extpack](https://download.virtualbox.org/virtualbox/$VBOX_VER/Oracle_VirtualBox_Extension_Pack-$VBOX_VER.vbox-extpack)
+
+# 3. Instalamos
+$ sudo vboxmanage extpack install Oracle_VirtualBox_Extension_Pack-$VBOX_VER.vbox-extpack
 ```
 
 ## AGREGAR USUARIO AL GRUPO *VBOXUSERS*
@@ -68,10 +74,21 @@ Añadimos nuestro usuario actual al grupo **vboxusers** con el siguiente comando
 $ sudo usermod -a -G vboxusers $USER
 ```
 
+> **IMPORTANTE:** Debemos cerrar sesión y volver a entrar (o reiniciar) para que este cambio tenga efecto.
+
+## NOTA SOBRE KERNEL Y MÓDULOS
+
+Al tener el **Secure Boot desactivado**, si después de una actualización de Fedora el programa no abre, simplemente ejecutamos el siguiente comando para reconstruir los controladores :
+
+```
+$ sudo /sbin/vboxconfig
+```
+
 ## DESINSTALAR VIRTUALBOX
 
 Para desinstalar basta con ejecutar:
 
 ```
-$ sudo dnf remove VirtualBox-7.2 -y
+# Opción genérica (borra cualquier versión de VB instalada)
+$ sudo dnf remove VirtualBox* -y
 ```
