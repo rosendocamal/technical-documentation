@@ -1,8 +1,8 @@
 # MIS PRIMEROS PASOS CON FEDORA
 
-| Autor         | Fecha      |
-|---------------|------------|
-| Rosendo Camal | 11/12/2025 |
+| Autor         | Fecha      | Actualización |
+|---------------|------------|---------------|
+| Rosendo Camal | 11/12/2025 | 12/01/2026    |
 
 ## Actualización de Fedora
 
@@ -12,23 +12,15 @@ Antes de configurar Fedora actualicé todo:
 $ sudo dnf upgrade --refresh -y
 ```
 
-```
-$ sudo dnf clean all
-```
-
-```
-$ sudo dnf update -y
-```
-
 Esto evitará conflictos de paquetes y errores al instalar software.
+
+> Nota: `dnf upgrade` ya hace el trabajo de `update` y `clean all` no es estrictamente necesario al inicio.
 
 ## Instalación de programas
 
-Una vez hecho lo anterior paso a instalar mis programas de uso con el comando `sudo dnf install program -y`.
+Una vez hecho lo anterior paso a instalar mis programas de uso con el comando `sudo dnf install [program] -y`.
 
-> Sustituye `program` por el programa a instalar.
-
-En mi caso los programas que instalaré es `ranger`, `neovim`, `git`, `chromium` y `tmux`.
+En mi caso los programas que instalaré son `ranger`, `neovim`, `git`, `chromium` y `tmux`.
 
 ```
 $ sudo dnf install ranger neovim git chromium tmux -y
@@ -50,11 +42,15 @@ También instalo a través de la tienda de aplicaciones otros programas o siguie
 
 ## Límite de carga al 80%
 
-Debido a que mi dispositivo es una Laptop Lenovo y tenía configuraciones que perdí al pasarme de Windows 11 a Linux Fedora. Quizé recuperar varias opciones que me brindaba la aplicación de Lenovo Vantage y el límite de carga es uno de ellos. Gracias a que Fedora sí lo soporta vía ACPI.
+Debido a que mi dispositivo es una Laptop Lenovo, **quise** recuperar varias opciones que me brindaba la aplicación de Lenovo Vantage y el límite de carga es uno de ellos.
 
-Lo activo así:
+> **IMPORTANTE:** Para usar TLP en Fedora sin conflictos, debemos desactivar el gestor de energía por defecto de GNOME.
 
 ```
+# 1. Deshabilitar el gestor de nativo para evitar conflictos
+$ sudo systemctl mask power-profiles-daemon
+
+# 2. Habilitar TLP
 $ sudo systemctl enable tlp --now
 ```
 
@@ -64,37 +60,35 @@ Verifico el estado de servicio:
 $ tlp-stat -s
 ```
 
-Si está activo, continuó configurando un archivo en la ruta `/etc/tlp.conf` ya sea con nvim, vim o nano:
+Si está activo, configuro el archivo en la ruta `/etc/tlp.conf`:
 
 ```
 $ sudo nvim /etc/tlp.conf
 ```
 
-Y busco las líneas comentadas `START_CHARGE_THRESH_BAT0=75` y `STOP_CHARGE_THRESH_BAT0=80`, las descomento y guardo el archivo.
+Busco y descomento las líneas: `START_CHARGE_THRESH_BAT0=75` y `STOP_CHARGE_THRESH_BAT0=80`.
 
-En `/etc/tlp.conf` también se puede configurar otros ajustes adicionales que ahora no están a mi alcance.
+Para aplicar los cambios automáticamente de dicho archivo, ejecutamos:
 
+```
+$ sudo tlp start
+```
 ## Otros pasos adicionales
-
-Son pasos que en algún momento intenté, pero al menos Gnome trae las opciones fáciles de emplear.
 
 ### Modo de energía inteligente
 
-Instala:
+> *Nota: Solo usar si NO se instaló TLP. Si usas TLP, omite este paso.*
+
+Instalamos si no tenemos el gestor de energía:
 
 ```
-$ sudo dnf isntall power-profiles-daemon -y
-```
+$ sudo dnf install power-profiles-daemon -y
 
-Con esto Fedora me da los modos de Ahorro, Balanceado y Rendimiento.
-
-Verificamos que esté habilitado:
-
-```
+# Habilitación del gestor de energía
 $ systemctl status power-profiles-daemon
 ```
 
-Para cambiar mode de energía: 
+Para cambiar el modo de energía en terminal: 
 
 ``` 
 # Modo ahorro de energía
@@ -114,8 +108,6 @@ Instala `powertop` y habilitálo:
 ```
 $ sudo dnf install powertop -y
 
-$ sudo powertop
-
 $ sudo powertop --auto-tune
 ```
 
@@ -125,9 +117,7 @@ Para la temperatura y el ventilador:
 
 ```
 $ sudo dnf install lm_sensors hddtemp -y
-
-$ sudo sensors-dectect
-
+$ sudo sensors-detect
 $ sensors
 ```
 
@@ -138,8 +128,7 @@ Permite vigilar la CPU y la batería, especialmente si se va a utilizar el modo 
 Esto permitirá cambiar la frecuencia de la CPU y el gobernador:
 
 ```
-$ sudo dnf isntall kernel-tools -y
-
+$ sudo dnf install kernel-tools -y
 $ sudo cpupower frequency-info
 
 # powersave reduce la temperatura y consumo
@@ -149,56 +138,15 @@ $ sudo cpupower frequency-set -g powersave
 $ sudo cpupower frequency-set -g performance
 ```
 
-### Hibernación y suspensión optimizada
-
-Se verifica el soporte vía:
-
-```
-$ cat /sys/power/state
-```
-
-Para la suspensión:
-
-```
-$ systemctl suspend
-```
-
-Para la hibernación (si lo permite la BIOS):
-
-```
-$ systemctl hibernate
-```
-
 ### Optimización de almacenamiento
 
-Para verificar si se tiene el TRIM automático:
-
 ```
+# Verificar TRIM automático
 $ sudo systemctl status fstrim.timer
-```
 
-Para limpiar archivos temporales:
-
-```
+# Limpieza de archivos
 $ sudo dnf autoremove
-
-$ sudo dnf clean all
-```
-
-Si se desea una limpieza periódica de caché y logs:
-
-```
-$ sudo dnf clean all
-
 $ sudo journalctl --vacuum-time=7d
-```
-
-Se puede aumentar el tamaño de la caché de disco para acelerar lectura/escritura en SSD:
-
-```
-$ sudo sysctl vm.swappiness=10
-
-$ sudo sysctl vm.vfs_cache_pressure=50
 ```
 
 ### Seguridad y actualizaciones automáticas
@@ -207,32 +155,24 @@ Para activar las actualizaciones automáticas de seguridad se puede emplear esto
 
 ```
 $ sudo dnf install dnf-automatic -y
-
 $ sudo systemctl enable --now dnf-automatic.timer
 ```
 
 Para un firewall activo:
 
 ```
-$ sudo systemctl enable-now firewalld
-
+# Firewall (Firewalld es el estándar en Fedora)
+$ sudo systemctl enable --now firewalld
 $ sudo firewall-cmd --state
 ```
 
 Aunque en Fedora está SELinux activo (ya viene por defecto) y esto protege el sistema sin nuestra intervención.
 
-También para el firewall se puede emplear:
+Para cifrado de archivos sensibles:
 
 ```
-$ sudo ufw enable
-
-$ sudo ufw status
-```
-
-Para cifrado de archivos sensibles se puede emplear Veracrypt para volumenes o para cifrado de archivos lo siguiente:
-
-```
-gcp -c file
+# Cifrar un archivo con contraseña
+gpg -c file_name
 ```
 
 ### Timeshift: para snapshots del sistema
@@ -243,10 +183,20 @@ Perfecto antes de grandes actualizaciones o cambios de configuración.
 $ sudo dnf install timeshift -y
 ```
 
-### Auditoría
+### Auditoría y Logs
 
-Para revisión de logs se puede emplear `journactl -xe`, indagar en la actividad de sudo `sudo cat /var/log/auth.log`, y existen herramientas de análisis como `fail2ban` para prevenir ataques SSH, firewalls como `ufw`, otras herramientas para intrusión y malware son: `failban` y `rkhunter`.
+Para revisión de logs en Fedora se emplea:
+
+```
+# Ver logs de errores recientes
+$ journalctl -p 3 -xb
+
+# Ver actividad de sudo
+$ sudo journalctl -t sudo
+```
+
+Herramientas recomendadas: `fail2ban` y `rkhunter`.
 
 ## Nota final
 
-Estos son los comandos o aspectos técnicos que requiero al momento de una instalación o reinstalación de Linux Fedora. Hay más cosas que realizo pero no son tan técnica
+Estos son los comandos que requiero al momento de una instalación o reinstalación de Linux Fedora.
