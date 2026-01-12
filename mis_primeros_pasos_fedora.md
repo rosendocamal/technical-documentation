@@ -171,8 +171,14 @@ Aunque en Fedora está SELinux activo (ya viene por defecto) y esto protege el s
 Para cifrado de archivos sensibles:
 
 ```
-# Cifrar un archivo con contraseña
-gpg -c file_name
+# 1. Cifrar el archivo (creará uno nuevo con extensión .gpg)
+$ gpg -c file_name
+
+# 2. IMPORTANTE: Borrar el original de forma segura (para que no quede expuesto)
+$ shred -u file_name
+
+# 3. Para recuperar/descifrar el archivo cuando lo necesites
+$ gpg -d file_name.gpg > file_name
 ```
 
 ### Timeshift: para snapshots del sistema
@@ -182,6 +188,8 @@ Perfecto antes de grandes actualizaciones o cambios de configuración.
 ```
 $ sudo dnf install timeshift -y
 ```
+
+> Nota: Si usas RSYNC (recomendado para principiantes), asegúrate de guardar las copias en un disco externo o una partición diferente para no llenar el disco principal.
 
 ### Auditoría y Logs
 
