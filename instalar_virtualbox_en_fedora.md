@@ -90,22 +90,20 @@ $ sudo /sbin/vboxconfig
 
 Si el Secure Boot está activado en la BIOS, el Kernel de Fedora bloqueará los controladores de VirtualBox por no tener una firma digital confiable. Para solucionarlo, debemos crear nuestra propia llave de firma e importarla al sistema.
 
-Generar la llave de firma (MOK - Machine Owner Key): Crea una carpeta para tus llaves y genera el certificado. Este paso solo se hace la primera vez.
+**1. Generar la llave de firma (MOK - Machine Owner Key):** Crea una carpeta para tus llaves y genera el certificado. Este paso solo se hace la primera vez.
 
 ```
 $ sudo mkdir -p /root/module-signing
 $ sudo openssl req -new -x509 -newkey rsa:2048 -keyout /root/module-signing/MOK.priv -outform DER -out /root/module-signing/MOK.der -nodes -days 36500 -subj "/CN=VirtualBox/"
 ```
 
-Importar la llave a la BIOS: Debes "decirle" a tu computadora que confíe en esta nueva llave. Te pedirá una contraseña: elígela y anótala, la necesitarás al reiniciar.
+**2. Importar la llave a la BIOS:** Debes "decirle" a tu computadora que confíe en esta nueva llave. Te pedirá una contraseña: elígela y anótala, la necesitarás al reiniciar.
 
 ```
 $ sudo mokutil --import /root/module-signing/MOK.der
 ```
 
-Reiniciar y Enrolar (Paso Crítico).
-
-Reinicia tu computadora. Antes de iniciar Fedora, aparecerá una pantalla azul/negra llamada Shim UEFI Key Management:
+**3. Reiniciar y Enrolar:** (Paso Crítico). Reinicia tu computadora. Antes de iniciar Fedora, aparecerá una pantalla azul/negra llamada Shim UEFI Key Management:
 
 - Selecciona Enroll MOK.
 - Selecciona View key 0 (opcional, para confirmar que es la tuya).
@@ -114,19 +112,19 @@ Reinicia tu computadora. Antes de iniciar Fedora, aparecerá una pantalla azul/n
 - Introduce la contraseña que creaste en el paso anterior.
 - Selecciona Reboot.
 
-Firmar los módulos de VirtualBox: Ahora que el sistema confía en tu llave, firma los controladores instalados. Este comando debe ejecutarse después de instalar VirtualBox o tras una actualización mayor:
+**4. Firmar los módulos de VirtualBox:** Ahora que el sistema confía en tu llave, firma los controladores instalados. Este comando debe ejecutarse después de instalar VirtualBox o tras una actualización mayor:
 
 ```
 $ sudo /usr/src/kernels/$(uname -r)/scripts/sign-file sha256 /root/module-signing/MOK.priv /root/module-signing/MOK.der $(modinfo -n vboxdrv)
 ```
 
-Cargar el módulo: Finalmente, carga el controlador firmado:
+**5. Cargar el módulo:** Finalmente, carga el controlador firmado:
 
 ```
 $ sudo modprobe vboxdrv
 ```
 
-> ¿Cuándo repetir esto?
+**¿Cuándo repetir esto?**
 
 - El paso 1, 2 y 3: Solo se hacen una vez en la vida de tu instalación actual.
 - El paso 4: Solo se repite si actualizas el Kernel de Fedora y VirtualBox deja de abrir.
