@@ -51,7 +51,7 @@ $ ssh-keygen -t ed25519 -f ~/.ssh/git_workshop -C "mail@domain.com"
 
 > También se puede crear la clave SSH de manera más rápida pero sin tanta personalización al usar únicamente `ssh-keygen`.
 
-Necesitamos comprobar que **ssh-agent** esté funcionando ya que esté nos permite iniciar sesión en otros servidores sin que nosotros introducazmos de nuevo una contraseña.
+Necesitamos comprobar que **ssh-agent** esté funcionando ya que esté nos permite iniciar sesión en otros servidores sin que nosotros introduzcamos de nuevo una contraseña.
 
 ``` 
 $ eval "$(ssh-agent -s)"
@@ -62,6 +62,22 @@ Y añadimos la clave creada a ssh-agent:
 ```
 # Recuerda intercambiar "git_workshop" por el nombre que le hayas puesto al crear la clave SSH.
 $ ssh-add ~/.ssh/git_workshop
+```
+
+> **CONFIGURACIÓN NECESARIA:** Crear un archivo config para reconocer la clave personalizada.
+
+```
+$ nvim ~/.ssh/config
+
+# Asegurar que solo tu usuario pueda leer la configuración SSH
+$ chmod 600 ~/.ssh/config
+```
+
+Pegar lo siguiente dentro del archivo:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/git_workshop
 ```
 
 Luego inicia sesión en GitHub, ve a **Settings** y de ahí a **SSH and GPG Keys**. Crea una nueva clave SSH, pónle un nombre descriptivo (sección *Title*) para identificar desde que equipo te pertenece y se usa la clave, y en el recuadro indicado (sección *Key*) se pega el contenido del archivo **git_workshop.pub** ubicado en la ruta `~/.ssh/git_workshop.pub`.
@@ -93,7 +109,7 @@ Esto nos permite configurar la conexión de Git de nuestro equipo con el servido
 Ya de ahí te clonas un repositorio al que tengas acceso mediante la siguiente forma:
 
 ```
-$ git clone git@github:user/repo.git
+$ git clone git@github.com:user/repo.git
 ```
 
 Y ya con ello podremos trabajar con Git en dicho repositorio
